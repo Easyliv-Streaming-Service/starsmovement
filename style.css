@@ -1,5 +1,9 @@
 /* style.css */
 body {
+     background-image: url('zodiac-symbols.jpg'); /* URL of the image */
+    background-size: cover; /* Ensures the image covers the whole screen */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-position: center center; /* Centers the background image */
     font-family: Arial, sans-serif;
     background-color: #f0f8ff;
     display: flex;
