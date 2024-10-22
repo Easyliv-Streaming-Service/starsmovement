@@ -1,4 +1,3 @@
-// script.js
 function calculateZodiacMovement() {
     // Get the date and time input
     const dateInput = document.getElementById('date').value;
@@ -12,11 +11,8 @@ function calculateZodiacMovement() {
 
     // Parse the date input
     const inputDate = new Date(dateInput);
-    inputDate.setHours(0, 0, 0, 0); // Set to midnight for date calculations
-
-    // Parse time input into hours, minutes, and seconds
-    const [hours, minutes, seconds] = timeInput.split(':').map(Number);
-    inputDate.setHours(hours, minutes, seconds); // Set the time
+    const [hours, minutes] = timeInput.split(':').map(Number);
+    inputDate.setHours(hours, minutes, 0, 0); // Set the time
 
     // Zodiac signs and their ranges, along with their associated planets
     const zodiacSigns = [
@@ -53,7 +49,7 @@ function calculateZodiacMovement() {
     }
 
     // Calculate degree of the sun based on days passed in the zodiac period
-    const startOfSign = new Date(currentZodiac ? zodiacSigns.find(z => z.sign === currentZodiac).start : null);
+    const startOfSign = zodiacSigns.find(z => z.sign === currentZodiac).start;
     const daysPassed = Math.floor((inputDate - startOfSign) / (1000 * 60 * 60 * 24));
     const degreeOfSun = (daysPassed % 30) + 1; // Assuming each sign is 30 degrees
 
@@ -66,6 +62,7 @@ function calculateZodiacMovement() {
     const sunRiseTime = new Date(`1970-01-01T06:00:00`);
     sunRiseTime.setMinutes(sunRiseTime.getMinutes() - risingTimeMinutes);
 
+    // Format time for display
     const risingTimeString = `${sunRiseTime.getHours().toString().padStart(2, '0')}:${sunRiseTime.getMinutes().toString().padStart(2, '0')} AM`;
 
     // Display the result
