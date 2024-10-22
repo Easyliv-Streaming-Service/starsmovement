@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zodiac Movement Calculator</title>
+    <title>Zodiac Rising Time Calculator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="calculator-container">
-        <h1>Zodiac Movement Calculator</h1>
-
-        <!-- Input fields for date and time -->
+    <div class="container">
+        <h1>Zodiac Rising Time Calculator</h1>
         <label for="date">Enter Date:</label>
-        <input type="date" id="date">
+        <input type="date" id="date" required>
+        
+        <label for="time">Enter Time:</label>
+        <input type="time" id="time" required>
 
-        <label for="time">Enter Time (Hours:Minutes:Seconds):</label>
-        <input type="time" id="time" step="1">
-
-        <button onclick="calculateZodiacMovement()">Calculate Zodiac Movement</button>
+        <button onclick="calculateZodiacMovement()">Calculate</button>
 
         <div id="result"></div>
     </div>
