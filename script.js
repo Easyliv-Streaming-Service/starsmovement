@@ -1,65 +1,70 @@
 // script.js
 function calculateZodiacMovement() {
-    // Get time input
+    // Get the date and time input
+    const dateInput = document.getElementById('date').value;
     const timeInput = document.getElementById('time').value;
-    
-    // If no time is provided, show an error message
-    if (!timeInput) {
-        document.getElementById('result').innerHTML = "Please enter a valid time.";
+
+    // Check if date or time input is missing
+    if (!dateInput || !timeInput) {
+        document.getElementById('result').innerHTML = "Please enter a valid date and time.";
         return;
     }
 
-    // Split time into hours, minutes, and seconds
+    // Parse the date input
+    const inputDate = new Date(dateInput);
+
+    // Get month and day from the date input
+    const month = inputDate.getUTCMonth() + 1; // Months are 0-based in JavaScript
+    const day = inputDate.getUTCDate();
+
+    // Parse time input into hours, minutes, and seconds
     const [hours, minutes, seconds] = timeInput.split(':').map(Number);
 
-    // Zodiac signs in 24 hours (each sign takes ~2 hours)
+    // Zodiac signs and their ranges
     const zodiacSigns = [
-        { sign: "Aries", start: 0 },
-        { sign: "Taurus", start: 2 },
-        { sign: "Gemini", start: 4 },
-        { sign: "Cancer", start: 6 },
-        { sign: "Leo", start: 8 },
-        { sign: "Virgo", start: 10 },
-        { sign: "Libra", start: 12 },
-        { sign: "Scorpio", start: 14 },
-        { sign: "Sagittarius", start: 16 },
-        { sign: "Capricorn", start: 18 },
-        { sign: "Aquarius", start: 20 },
-        { sign: "Pisces", start: 22 }
+        { sign: "Aries", startDate: new Date("2024-04-22"), endDate: new Date("2024-05-22") },
+        { sign: "Taurus", startDate: new Date("2024-05-23"), endDate: new Date("2024-06-20") },
+        { sign: "Gemini", startDate: new Date("2024-06-21"), endDate: new Date("2024-07-20") },
+        { sign: "Cancer", startDate: new Date("2024-07-21"), endDate: new Date("2024-08-20") },
+        { sign: "Leo", startDate: new Date("2024-08-21"), endDate: new Date("2024-09-22") },
+        { sign: "Virgo", startDate: new Date("2024-09-23"), endDate: new Date("2024-10-24") },
+        { sign: "Libra", startDate: new Date("2024-10-25"), endDate: new Date("2024-11-23") },
+        { sign: "Scorpio", startDate: new Date("2024-11-24"), endDate: new Date("2024-12-21") },
+        { sign: "Sagittarius", startDate: new Date("2024-12-22"), endDate: new Date("2024-01-17") },
+        { sign: "Capricorn", startDate: new Date("2024-01-18"), endDate: new Date("2024-02-16") },
+        { sign: "Aquarius", startDate: new Date("2024-02-17"), endDate: new Date("2024-03-19") },
+        { sign: "Pisces", startDate: new Date("2024-03-20"), endDate: new Date("2024-04-21") }
     ];
 
-    // Convert time to total minutes in the day
-    const totalMinutes = (hours * 60) + minutes + (seconds / 60);
+    let currentZodiac = null;
 
-    // Each sign lasts for 120 minutes (2 hours)
-    const signDuration = 120; // 2 hours in minutes
-
-    // Determine which zodiac sign is currently rising
-    let currentZodiac = "";
-    let degreeMoved = 0;
-    for (let i = 0; i < zodiacSigns.length; i++) {
-        const { sign, start } = zodiacSigns[i];
-        const startTime = start * 60; // convert start time to minutes
-
-        if (totalMinutes >= startTime && totalMinutes < startTime + signDuration) {
-            currentZodiac = sign;
-            degreeMoved = ((totalMinutes - startTime) / signDuration) * 30; // 30 degrees per sign
+    // Find which zodiac sign the input date falls into
+    for (const zodiac of zodiacSigns) {
+        if (inputDate >= zodiac.startDate && inputDate <= zodiac.endDate) {
+            currentZodiac = zodiac.sign;
             break;
         }
     }
 
-    // Calculate rising time in hours, minutes, and seconds
-    const degreesPerMinute = 0.25; // 15 degrees per hour -> 0.25 degrees per minute
-    const movementInMinutes = degreeMoved / degreesPerMinute;
+    // Calculate degree of the sun based on days passed in the zodiac period
+    const startOfSign = new Date(currentZodiac ? zodiac.startDate : null);
+    const daysPassed = Math.floor((inputDate - startOfSign) / (1000 * 60 * 60 * 24));
+    const degreeOfSun = (daysPassed % 30) + 1; // Assuming each sign is 30 degrees
 
-    const risingHours = Math.floor(movementInMinutes / 60);
-    const risingMinutes = Math.floor(movementInMinutes % 60);
-    const risingSeconds = Math.floor((movementInMinutes % 1) * 60);
+    // Calculate rising time based on degrees
+    const risingTimeMinutes = degreeOfSun * 4;
+    const risingHours = Math.floor(risingTimeMinutes / 60);
+    const risingMinutes = risingTimeMinutes % 60;
 
-    // Display result
+    // Calculate the final rising time
+    const sunRiseTime = new Date(`1970-01-01T06:00:00`);
+    sunRiseTime.setMinutes(sunRiseTime.getMinutes() - risingTimeMinutes);
+
+    const risingTimeString = `${sunRiseTime.getHours().toString().padStart(2, '0')}:${sunRiseTime.getMinutes().toString().padStart(2, '0')} AM`;
+
+    // Display the result
     document.getElementById('result').innerHTML = `
-        The current zodiac sign is <strong>${currentZodiac}</strong>.<br>
-        It has moved ${degreeMoved.toFixed(2)} degrees.<br>
-        The rising time is ${risingHours} hours, ${risingMinutes} minutes, ${risingSeconds} seconds.
+        The degree of the sun in ${currentZodiac} is ${degreeOfSun}.<br>
+        The rising time of ${currentZodiac} is: ${risingTimeString}, leading the sun 🌞 by ${risingHours} hours ${risingMinutes} minutes of local time.
     `;
 }
