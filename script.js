@@ -12,47 +12,47 @@ function calculateZodiacMovement() {
 
     // Parse the date input
     const inputDate = new Date(dateInput);
-
-    // Get month and day from the date input
-    const month = inputDate.getUTCMonth() + 1; // Months are 0-based in JavaScript
-    const day = inputDate.getUTCDate();
+    inputDate.setHours(0, 0, 0, 0); // Set to midnight for date calculations
 
     // Parse time input into hours, minutes, and seconds
     const [hours, minutes, seconds] = timeInput.split(':').map(Number);
+    inputDate.setHours(hours, minutes, seconds); // Set the time
 
-    // Zodiac signs and their ranges
+    // Zodiac signs and their ranges, along with their associated planets
     const zodiacSigns = [
-        { sign: "Aries", startDate: new Date("2024-04-22"), endDate: new Date("2024-05-22") },
-        { sign: "Taurus", startDate: new Date("2024-05-23"), endDate: new Date("2024-06-20") },
-        { sign: "Gemini", startDate: new Date("2024-06-21"), endDate: new Date("2024-07-20") },
-        { sign: "Cancer", startDate: new Date("2024-07-21"), endDate: new Date("2024-08-20") },
-        { sign: "Leo", startDate: new Date("2024-08-21"), endDate: new Date("2024-09-22") },
-        { sign: "Virgo", startDate: new Date("2024-09-23"), endDate: new Date("2024-10-24") },
-        { sign: "Libra", startDate: new Date("2024-10-25"), endDate: new Date("2024-11-23") },
-        { sign: "Scorpio", startDate: new Date("2024-11-24"), endDate: new Date("2024-12-21") },
-        { sign: "Sagittarius", startDate: new Date("2024-12-22"), endDate: new Date("2024-01-17") },
-        { sign: "Capricorn", startDate: new Date("2024-01-18"), endDate: new Date("2024-02-16") },
-        { sign: "Aquarius", startDate: new Date("2024-02-17"), endDate: new Date("2024-03-19") },
-        { sign: "Pisces", startDate: new Date("2024-03-20"), endDate: new Date("2024-04-21") }
+        { sign: "Aries", start: new Date(inputDate.getFullYear(), 3, 22), end: new Date(inputDate.getFullYear(), 4, 21), planet: "Mars" },
+        { sign: "Taurus", start: new Date(inputDate.getFullYear(), 4, 22), end: new Date(inputDate.getFullYear(), 5, 20), planet: "Venus" },
+        { sign: "Gemini", start: new Date(inputDate.getFullYear(), 5, 21), end: new Date(inputDate.getFullYear(), 6, 20), planet: "Mercury" },
+        { sign: "Cancer", start: new Date(inputDate.getFullYear(), 6, 21), end: new Date(inputDate.getFullYear(), 7, 20), planet: "Moon" },
+        { sign: "Leo", start: new Date(inputDate.getFullYear(), 7, 21), end: new Date(inputDate.getFullYear(), 8, 22), planet: "Sun" },
+        { sign: "Virgo", start: new Date(inputDate.getFullYear(), 8, 23), end: new Date(inputDate.getFullYear(), 9, 24), planet: "Mercury" },
+        { sign: "Libra", start: new Date(inputDate.getFullYear(), 9, 25), end: new Date(inputDate.getFullYear(), 10, 23), planet: "Venus" },
+        { sign: "Scorpio", start: new Date(inputDate.getFullYear(), 10, 24), end: new Date(inputDate.getFullYear(), 11, 21), planet: "Mars" },
+        { sign: "Sagittarius", start: new Date(inputDate.getFullYear(), 11, 22), end: new Date(inputDate.getFullYear() + (inputDate.getMonth() === 11 ? 1 : 0), 0, 20), planet: "Jupiter" },
+        { sign: "Capricorn", start: new Date(inputDate.getFullYear(), 0, 21), end: new Date(inputDate.getFullYear(), 1, 18), planet: "Saturn" },
+        { sign: "Aquarius", start: new Date(inputDate.getFullYear(), 1, 19), end: new Date(inputDate.getFullYear(), 2, 20), planet: "Saturn" },
+        { sign: "Pisces", start: new Date(inputDate.getFullYear(), 2, 21), end: new Date(inputDate.getFullYear(), 3, 21), planet: "Jupiter" }
     ];
 
     let currentZodiac = null;
+    let associatedPlanet = null;
 
     // Find which zodiac sign the input date falls into
     for (const zodiac of zodiacSigns) {
-        if (inputDate >= zodiac.startDate && inputDate <= zodiac.endDate) {
+        if (inputDate >= zodiac.start && inputDate <= zodiac.end) {
             currentZodiac = zodiac.sign;
+            associatedPlanet = zodiac.planet;
             break;
         }
     }
 
     // Calculate degree of the sun based on days passed in the zodiac period
-    const startOfSign = new Date(currentZodiac ? zodiac.startDate : null);
+    const startOfSign = new Date(currentZodiac ? zodiac.start : null);
     const daysPassed = Math.floor((inputDate - startOfSign) / (1000 * 60 * 60 * 24));
     const degreeOfSun = (daysPassed % 30) + 1; // Assuming each sign is 30 degrees
 
     // Calculate rising time based on degrees
-    const risingTimeMinutes = degreeOfSun * 4;
+    const risingTimeMinutes = degreeOfSun * 4; // 4 minutes per degree
     const risingHours = Math.floor(risingTimeMinutes / 60);
     const risingMinutes = risingTimeMinutes % 60;
 
@@ -65,6 +65,7 @@ function calculateZodiacMovement() {
     // Display the result
     document.getElementById('result').innerHTML = `
         The degree of the sun in ${currentZodiac} is ${degreeOfSun}.<br>
-        The rising time of ${currentZodiac} is: ${risingTimeString}, leading the sun 🌞 by ${risingHours} hours ${risingMinutes} minutes of local time.
+        The rising time of ${currentZodiac} is: ${risingTimeString}, leading the sun 🌞 by ${risingHours} hours ${risingMinutes} minutes of local time.<br>
+        The ruling planet of ${currentZodiac} is ${associatedPlanet}.
     `;
 }
