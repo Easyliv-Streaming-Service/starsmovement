@@ -46,8 +46,14 @@ function calculateZodiacMovement() {
         }
     }
 
+    // If no zodiac sign is found
+    if (!currentZodiac) {
+        document.getElementById('result').innerHTML = "No zodiac sign found for this date.";
+        return;
+    }
+
     // Calculate degree of the sun based on days passed in the zodiac period
-    const startOfSign = new Date(currentZodiac ? zodiac.start : null);
+    const startOfSign = new Date(currentZodiac ? zodiacSigns.find(z => z.sign === currentZodiac).start : null);
     const daysPassed = Math.floor((inputDate - startOfSign) / (1000 * 60 * 60 * 24));
     const degreeOfSun = (daysPassed % 30) + 1; // Assuming each sign is 30 degrees
 
