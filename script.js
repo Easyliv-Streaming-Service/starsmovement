@@ -53,7 +53,7 @@ function calculateZodiacMovement() {
     // Calculate the degree of the sun based on the provided zodiac degree
     const startOfSign = zodiacSigns.find(z => z.sign === currentZodiac).start;
     const daysPassed = Math.floor((inputDate - startOfSign) / (1000 * 60 * 60 * 24));
-    const degreeOfSun = (daysPassed % zodiacDegree) + 1; // Wrap around the degree
+    const degreeOfSun = (daysPassed % zodiacDegree) + 1; // Wrap around the degree and make it 1-based
 
     // Calculate rising time based on degrees
     const risingTimeMinutes = degreeOfSun * 4; // 4 minutes per degree
@@ -67,7 +67,7 @@ function calculateZodiacMovement() {
     // Format time for display
     const risingTimeString = `${sunRiseTime.getHours().toString().padStart(2, '0')}:${sunRiseTime.getMinutes().toString().padStart(2, '0')} AM`;
 
-    // Calculate the movement of the zodiac
+    // Calculate the movement of the zodiac in degrees
     const movementOfSun = (degreeOfSun / zodiacDegree) * 100; // Percentage of the sign's degree covered
     const movementString = `${degreeOfSun} degrees (${movementOfSun.toFixed(2)}%) of ${currentZodiac}`;
 
